@@ -1,0 +1,6 @@
+pH,TDS,Location,Timestamp
+7.8,180,Data Center 1,2024-01-17 08:00:00
+7.9,195,Data Center 1,2024-01-17 09:00:00
+7.7,170,Data Center 1,2024-01-17 10:00:00
+8.0,205,Data Center 1,2024-01-17 11:00:00
+7.8,188,Data Center 1,2024-01-17 12:00:00
