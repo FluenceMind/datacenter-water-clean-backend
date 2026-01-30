@@ -1,6 +1,7 @@
 from mongoengine import connect, disconnect
 from app.core.config import settings
 import logging
+import ssl
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,9 @@ def connect_to_mongo():
         connect(
             db=settings.MONGODB_DB_NAME,
             host=connection_url,
-            alias='default'
+            alias='default',
+            tlsAllowInvalidCertificates=True,
+            ssl_cert_reqs=ssl.CERT_NONE
         )
         logger.info(f"Successfully connected to MongoDB: {settings.MONGODB_DB_NAME}")
     except Exception as e:
