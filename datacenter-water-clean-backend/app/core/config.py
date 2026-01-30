@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     API_VERSION: str = "1.0.0"
     
     # CORS Configuration
-    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173,http://localhost:5174"
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173,http://localhost:5174,https://datacenter-water-clean-frontend.vercel.app"
     
     # Environment
     ENVIRONMENT: str = "development"
