@@ -20,8 +20,7 @@ def connect_to_mongo():
             db=settings.MONGODB_DB_NAME,
             host=connection_url,
             alias='default',
-            tlsAllowInvalidCertificates=True,
-            ssl_cert_reqs=ssl.CERT_NONE
+            tlsAllowInvalidCertificates=True
         )
         logger.info(f"Successfully connected to MongoDB: {settings.MONGODB_DB_NAME}")
     except Exception as e:
