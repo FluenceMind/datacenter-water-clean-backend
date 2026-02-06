@@ -106,3 +106,39 @@ class TestHistoryEndpoints:
         
         assert response.status_code == 400
         assert "Invalid analysis ID format" in response.json()["detail"]
+    
+    @patch('app.api.history.WaterAnalysis')
+    def test_get_history_with_old_records(self, mock_water_analysis):
+        """Test history retrieval handles old records without treatment fields"""
+        # Mock database query
+        mock_objects = Mock()
+        mock_objects.count.return_value = 1
+        
+        # Create mock analysis record WITHOUT treatment fields (old record)
+        mock_analysis = Mock(spec=['id', 'upload_timestamp', 'original_filename', 'site_name',
+                                     'avg_ph', 'ph_category', 'avg_tds', 'tds_category'])
+        mock_analysis.id = "507f1f77bcf86cd799439011"
+        mock_analysis.upload_timestamp = datetime(2026, 1, 1, 12, 0, 0)
+        mock_analysis.original_filename = "old_test.csv"
+        mock_analysis.site_name = "Old Site"
+        mock_analysis.avg_ph = 7.5
+        mock_analysis.ph_category = "Target"
+        mock_analysis.avg_tds = 150
+        mock_analysis.tds_category = "Moderate"
+        # No treatment_train or explanation attributes (spec prevents auto-generation)
+        
+        mock_skip = Mock()
+        mock_skip.limit.return_value = [mock_analysis]
+        mock_objects.skip.return_value = mock_skip
+        mock_water_analysis.objects = mock_objects
+        
+        # Make request
+        response = client.get("/api/v1/analysis/history")
+        
+        # Assertions
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["analyses"]) == 1
+        # Should handle missing fields gracefully with None
+        assert data["analyses"][0]["treatment_train"] is None
+        assert data["analyses"][0]["explanation"] is None

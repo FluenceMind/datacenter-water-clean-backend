@@ -38,8 +38,8 @@ class AnalysisHistoryItem(BaseModel):
     ph_category: str
     avg_tds: float
     tds_category: str
-    treatment_train: str
-    explanation: str
+    treatment_train: Optional[str] = None
+    explanation: Optional[str] = None
 
 
 class AnalysisHistoryResponse(BaseModel):

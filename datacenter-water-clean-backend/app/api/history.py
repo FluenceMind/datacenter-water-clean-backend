@@ -41,8 +41,8 @@ def get_analysis_history(
             ph_category=analysis.ph_category,
             avg_tds=analysis.avg_tds,
             tds_category=analysis.tds_category,
-            treatment_train=analysis.treatment_train,
-            explanation=analysis.explanation
+            treatment_train=getattr(analysis, 'treatment_train', None),
+            explanation=getattr(analysis, 'explanation', None)
         )
         for analysis in analyses
     ]
