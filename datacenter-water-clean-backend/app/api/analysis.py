@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, UTC
 
 from app.services.csv_service import CSVService
 from app.services.recommendation_service import RecommendationService
@@ -41,7 +41,7 @@ async def upload_and_analyze(
     
     # Save to database
     analysis = WaterAnalysis(
-        upload_timestamp=datetime.utcnow(),
+        upload_timestamp=datetime.now(UTC),
         original_filename=file.filename,
         site_name=site_name,
         avg_ph=stats['avg_ph'],

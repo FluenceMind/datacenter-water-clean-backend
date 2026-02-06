@@ -1,9 +1,15 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import List
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
+    
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True
+    )
     
     # MongoDB Configuration
     MONGODB_URL: str
@@ -25,10 +31,6 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> List[str]:
         """Convert CORS_ORIGINS string to list."""
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 
 settings = Settings()
