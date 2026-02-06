@@ -29,6 +29,9 @@ class WaterAnalysis(Document):
     treatment_train = StringField(required=True, max_length=500)
     explanation = StringField(required=True, max_length=2000)
     
+    # User notes about methods actually used
+    user_notes = StringField(max_length=2000)
+    
     # Metadata
     created_at = DateTimeField(default=datetime.utcnow)
     row_count = IntField(required=True, min_value=1)

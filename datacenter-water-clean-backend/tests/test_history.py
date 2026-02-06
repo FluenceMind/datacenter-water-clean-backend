@@ -33,6 +33,7 @@ class TestHistoryEndpoints:
         mock_analysis_1.tds_category = "Moderate"
         mock_analysis_1.treatment_train = "No treatment required"
         mock_analysis_1.explanation = "Water is clean"
+        mock_analysis_1.user_notes = "Applied basic filtration"
         
         mock_analysis_2 = Mock()
         mock_analysis_2.id = "507f1f77bcf86cd799439012"
@@ -45,6 +46,7 @@ class TestHistoryEndpoints:
         mock_analysis_2.tds_category = "Moderate"
         mock_analysis_2.treatment_train = "H₂SO₄ acid dosing + RO"
         mock_analysis_2.explanation = "High pH requires acid treatment"
+        mock_analysis_2.user_notes = None
         
         mock_skip = Mock()
         mock_skip.limit.return_value = [mock_analysis_1, mock_analysis_2]
@@ -142,3 +144,46 @@ class TestHistoryEndpoints:
         # Should handle missing fields gracefully with None
         assert data["analyses"][0]["treatment_train"] is None
         assert data["analyses"][0]["explanation"] is None
+    
+    @patch('app.api.history.WaterAnalysis')
+    @patch('app.api.history.ObjectId')
+    def test_update_analysis_notes_success(self, mock_objectid, mock_water_analysis):
+        """Test successful update of analysis notes"""
+        # Mock ObjectId validation
+        mock_objectid.is_valid.return_value = True
+        
+        # Create mock analysis
+        mock_analysis = Mock()
+        mock_analysis.id = "507f1f77bcf86cd799439011"
+        mock_analysis.user_notes = None
+        
+        mock_objects = Mock()
+        mock_objects.get.return_value = mock_analysis
+        mock_water_analysis.objects = mock_objects
+        
+        # Make request
+        response = client.patch(
+            "/api/v1/analysis/507f1f77bcf86cd799439011/notes",
+            json={"user_notes": "Used RO system with pre-filtration"}
+        )
+        
+        # Assertions
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is True
+        assert data["analysis_id"] == "507f1f77bcf86cd799439011"
+        assert "user_notes" in data
+        mock_analysis.save.assert_called_once()
+    
+    @patch('app.api.history.ObjectId')
+    def test_update_analysis_notes_invalid_id(self, mock_objectid):
+        """Test update notes with invalid ID format"""
+        mock_objectid.is_valid.return_value = False
+        
+        response = client.patch(
+            "/api/v1/analysis/invalid-id/notes",
+            json={"user_notes": "Test notes"}
+        )
+        
+        assert response.status_code == 400
+        assert "Invalid analysis ID format" in response.json()["detail"]

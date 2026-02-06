@@ -40,6 +40,7 @@ class AnalysisHistoryItem(BaseModel):
     tds_category: str
     treatment_train: Optional[str] = None
     explanation: Optional[str] = None
+    user_notes: Optional[str] = None
 
 
 class AnalysisHistoryResponse(BaseModel):
