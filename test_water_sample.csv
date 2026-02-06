@@ -1,0 +1,4 @@
+sample_id,ph,tds,temperature,turbidity,dissolved_oxygen,conductivity
+SAMPLE001,7.2,450,22.5,1.2,8.5,650
+SAMPLE002,6.8,520,23.1,2.1,7.9,720
+SAMPLE003,7.5,380,21.8,0.9,9.1,580
