@@ -40,7 +40,9 @@ def get_analysis_history(
             avg_ph=analysis.avg_ph,
             ph_category=analysis.ph_category,
             avg_tds=analysis.avg_tds,
-            tds_category=analysis.tds_category
+            tds_category=analysis.tds_category,
+            treatment_train=analysis.treatment_train,
+            explanation=analysis.explanation
         )
         for analysis in analyses
     ]

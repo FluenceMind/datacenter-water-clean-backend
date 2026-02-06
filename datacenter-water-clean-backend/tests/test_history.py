@@ -31,6 +31,8 @@ class TestHistoryEndpoints:
         mock_analysis_1.ph_category = "Target"
         mock_analysis_1.avg_tds = 150
         mock_analysis_1.tds_category = "Moderate"
+        mock_analysis_1.treatment_train = "No treatment required"
+        mock_analysis_1.explanation = "Water is clean"
         
         mock_analysis_2 = Mock()
         mock_analysis_2.id = "507f1f77bcf86cd799439012"
@@ -41,6 +43,8 @@ class TestHistoryEndpoints:
         mock_analysis_2.ph_category = "High"
         mock_analysis_2.avg_tds = 200
         mock_analysis_2.tds_category = "Moderate"
+        mock_analysis_2.treatment_train = "H₂SO₄ acid dosing + RO"
+        mock_analysis_2.explanation = "High pH requires acid treatment"
         
         mock_skip = Mock()
         mock_skip.limit.return_value = [mock_analysis_1, mock_analysis_2]
