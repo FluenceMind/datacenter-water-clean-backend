@@ -1,266 +1,179 @@
-# DataCenter Water Clean - Backend API
+# DataCenter Water Clean
 
-FastAPI-based backend for water quality analysis and treatment recommendations.
+A web application for analyzing water quality in datacenter cooling systems. Upload CSV files with pH and TDS measurements, get treatment recommendations based on predefined rules, and track analysis history over time.
 
-## ✅ Implemented Features
+## What It Does
 
-### Core Functionality
-- **CSV Upload & Analysis**: Upload water quality data (pH, TDS) for automated analysis
-- **Treatment Recommendations**: 9 intelligent rules based on pH/TDS combinations
-- **Analysis History**: View past analyses with pagination
-- **MongoDB Integration**: Persistent storage of all analyses
-- **RESTful API**: Clean, documented endpoints with Swagger UI
+This application helps datacenter operators monitor water quality and determine what treatment methods to use. You upload a CSV file with pH and TDS measurements, and the system applies a rule-based logic to recommend appropriate treatment steps. Each analysis is stored so you can review past results and add notes about what treatment you actually applied.
 
-### Water Quality Parameters
-- **pH**: Target range 7.5-8.3
-  - Low: ≤ 7.5
-  - Target: 7.5-8.3
-  - High: ≥ 8.3
+The analysis uses fixed thresholds:
+- **pH target range:** 7.5 - 8.3
+- **TDS categories:** Low (<100 mg/L), Moderate (100-299 mg/L), High (≥300 mg/L)
 
-- **TDS (Total Dissolved Solids)**: Measured in mg/L or ppm
-  - Low: < 100
-  - Moderate: 100-299
-  - High: ≥ 300
+Based on these values, the system selects from 9 predefined treatment rules (A through I). Each rule maps to a specific treatment train like "pH adjustment with NaOH → Reverse osmosis (RO)" and includes an explanation of why that method was selected.
 
-### Treatment Rules
-| pH Category | TDS Category | Treatment |
-|------------|--------------|-----------|
-| Target | Low | No treatment required |
-| High | Low | pH adjustment with H₂SO₄ |
-| Low | Low | pH adjustment with NaOH |
-| Target | Moderate | Reverse osmosis (RO) |
-| Target | High | Ion exchange |
-| High | Moderate | H₂SO₄ → RO |
-| Low | Moderate | NaOH → RO |
-| High | High | H₂SO₄ → Ion exchange |
-| Low | High | NaOH → Ion exchange |
+### Complete Treatment Rules
 
-## 🚀 Quick Start
+| Rule | pH Category | TDS Category | Treatment |
+|------|------------|--------------|-----------|
+| **A** | Target | Low | No treatment required |
+| **B** | High | Low | pH adjustment with H₂SO₄ |
+| **C** | Low | Low | pH adjustment with NaOH |
+| **D** | Target | Moderate | Reverse osmosis (RO) |
+| **E** | Target | High | Ion exchange |
+| **F** | High | Moderate | H₂SO₄ → RO |
+| **G** | Low | Moderate | NaOH → RO |
+| **H** | High | High | H₂SO₄ → Ion exchange |
+| **I** | Low | High | NaOH → Ion exchange |
+
+## Features
+
+- Upload CSV files with water quality measurements (pH, TDS)
+- Get treatment recommendations based on rule-based logic
+- View analysis history with pagination
+- Add notes to track what treatment methods were actually used
+- Optional site name for each analysis
+- RESTful API backend with data validation
+- Responsive web interface
+
+## Tech Stack
+
+**Backend:**
+- Python 3.12
+- FastAPI (web framework)
+- MongoDB (database)
+- Pandas (CSV processing)
+- Pydantic (data validation)
+
+**Frontend:**
+- React 19
+- Material-UI (components)
+- Vite (build tool)
+- React Router (routing)
+- Axios (HTTP client)
+
+## Dependencies
+
+### Backend (Python)
+
+```
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.17
+mongoengine>=0.29.0
+pymongo>=4.10.1
+pandas>=2.2.0
+numpy>=2.0.0
+python-dotenv>=1.0.0
+pydantic>=2.10.0
+pytest>=8.0.0
+```
+
+### Frontend (JavaScript)
+
+```
+react: ^19.2.0
+react-dom: ^19.2.0
+react-router-dom: ^7.13.0
+@mui/material: ^7.3.7
+@mui/icons-material: ^7.3.7
+axios: ^1.13.4
+vite: ^7.2.4
+```
+
+## Setup Instructions
 
 ### Prerequisites
-- Python 3.13+
-- MongoDB Atlas account (free tier)
 
-### Installation
+- Python 3.12 or higher
+- Node.js 18 or higher
+- MongoDB instance (local or cloud)
 
-1. **Clone and navigate to backend**:
-   ```bash
-   cd datacenter-water-clean-backend
-   ```
+### Backend Setup
 
-2. **Create virtual environment**:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure environment**:
-   Create `.env` file with:
-   ```env
-   MONGODB_URL=your_mongodb_connection_string
-   MONGODB_DB_NAME=water_quality
-   API_HOST=0.0.0.0
-   API_PORT=8000
-   CORS_ORIGINS=http://localhost:3000,http://localhost:5173
-   ENVIRONMENT=development
-   ```
-
-5. **Run the server**:
-   ```bash
-   python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-   ```
-
-6. **Access API documentation**:
-   - Swagger UI: http://localhost:8000/docs
-   - ReDoc: http://localhost:8000/redoc
-   - Health check: http://localhost:8000/health
-
-## 📡 API Endpoints
-
-### Health Check
+1. Navigate to the backend directory:
 ```
-GET /health
-```
-Returns server status.
-
-### Upload & Analyze
-```
-POST /api/v1/analysis/upload
-Content-Type: multipart/form-data
-
-Parameters:
-- file: CSV file (required) - must contain 'pH' and 'TDS' columns
-- site_name: string (optional) - site identifier
-
-Response:
-{
-  "analysis_id": "string",
-  "upload_timestamp": "datetime",
-  "original_filename": "string",
-  "site_name": "string",
-  "summary": {
-    "avg_ph": 7.84,
-    "ph_category": "In target range",
-    "avg_tds": 187.6,
-    "tds_category": "Moderate",
-    "row_count": 5
-  },
-  "recommendation": {
-    "treatment_train": "Reverse osmosis (RO)",
-    "explanation": "TDS is elevated; RO is recommended..."
-  }
-}
+cd datacenter-water-clean-backend
 ```
 
-### Get Analysis History
+2. Create a virtual environment:
 ```
-GET /api/v1/analysis/history?limit=20&offset=0
-
-Response:
-{
-  "analyses": [...],
-  "total": 3,
-  "limit": 20,
-  "offset": 0
-}
+python -m venv venv
+source venv/bin/activate
 ```
 
-### Get Analysis by ID
+3. Install dependencies:
 ```
-GET /api/v1/analysis/{analysis_id}
-
-Response: Same as upload response
+pip install -r requirements.txt
 ```
 
-## 🧪 Testing
+4. Create a `.env` file with your MongoDB connection string:
+```
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
+```
 
-### Run automated tests:
+5. Run the development server:
+```
+uvicorn app.main:app --reload
+```
+
+The API will be available at `http://localhost:8000`
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+```
+cd frontend
+```
+
+2. Install dependencies:
+```
+npm install
+```
+
+3. Create a `.env` file with the backend URL:
+```
+VITE_API_URL=http://localhost:8000
+```
+
+4. Run the development server:
+```
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`
+
+### Running Tests
+
+Backend tests:
 ```bash
-cd datacenter-water-clean
-python test_api.py
+cd datacenter-water-clean-backend
+pytest
 ```
 
-### Sample CSV format:
+## CSV File Format
+
+The application expects CSV files with the following columns:
+- `pH` - pH measurements (numeric)
+- `TDS` - Total Dissolved Solids in mg/L (numeric)
+
+Example:
 ```csv
-pH,TDS,Location,Timestamp
-7.2,85,Server Room A,2024-01-15 08:00:00
-7.4,92,Server Room A,2024-01-15 09:00:00
+pH,TDS
+7.2,150
+7.3,148
+7.1,155
 ```
 
-Test samples are available in `../test_samples/` directory.
+## Deployment
 
-## 📁 Project Structure
+- **Backend:** Deployed on Render
+- **Frontend:** Deployed on Vercel
+- **Database:** MongoDB Atlas
 
-```
-datacenter-water-clean-backend/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                    # FastAPI app & startup
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── analysis.py            # Upload endpoint
-│   │   ├── health.py              # Health check
-│   │   └── history.py             # History endpoints
-│   ├── core/
-│   │   ├── __init__.py
-│   │   └── config.py              # Settings & configuration
-│   ├── db/
-│   │   ├── __init__.py
-│   │   └── mongo.py               # MongoDB connection
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── analysis_result.py     # Pydantic models
-│   │   └── water_sample.py        # MongoDB document
-│   └── services/
-│       ├── __init__.py
-│       ├── csv_service.py         # CSV parsing & validation
-│       └── recommendation_service.py  # Treatment logic
-├── requirements.txt
-├── .env                           # Environment variables
-├── .gitignore
-└── README.md
-```
-
-## 🛠️ Technologies
-
-- **FastAPI** 0.115+ - Modern web framework
-- **MongoDB** - Document database (via MongoEngine ODM)
-- **Pandas** 2.2+ - Data processing
-- **Pydantic** 2.10+ - Data validation
-- **Uvicorn** - ASGI server
-
-## 🌐 Deployment
-
-### Render (Recommended)
-1. Create new Web Service
-2. Connect GitHub repository
-3. Configure:
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. Add environment variables from `.env`
-5. Deploy!
-
-Free tier available: https://render.com
-
-## 📊 Database Schema
-
-### WaterAnalysis Collection
-```python
-{
-  "_id": ObjectId,
-  "upload_timestamp": datetime,
-  "original_filename": str,
-  "site_name": str (optional),
-  "avg_ph": float,
-  "ph_category": str,
-  "avg_tds": float,
-  "tds_category": str,
-  "treatment_train": str,
-  "explanation": str,
-  "row_count": int,
-  "min_ph": float,
-  "max_ph": float,
-  "min_tds": float,
-  "max_tds": float,
-  "created_at": datetime
-}
-```
-
-## 🔧 Development
-
-### Add new endpoint:
-1. Create route in `app/api/`
-2. Import and include in `app/main.py`
-3. Test via Swagger UI
-
-### Add new service:
-1. Create service in `app/services/`
-2. Import and use in API routes
-
-### Update models:
-1. MongoDB documents: `app/models/water_sample.py`
-2. API responses: `app/models/analysis_result.py`
-
-## 📝 Next Steps (Frontend Integration)
-
-The backend is ready for frontend integration. Frontend should:
-1. Use React with Vite
-2. Implement Material-UI for components
-3. Create forms for file upload
-4. Display analysis results and history
-5. Visualize data with charts (pH/TDS trends)
-
-See `PROJECT_REQUIREMENTS.md` and `IMPLEMENTATION_PLAN.md` for details.
-
-## 🤝 Contributing
-
-This is a capstone project for App Academy by Tatiana Didenko.
-
-## 📄 License
+## License
 
 See LICENSE file for details.
+
+## Author 
+This project is developed by Tatiana
