@@ -109,7 +109,12 @@ pip install -r requirements.txt
 
 4. Create a `.env` file with your MongoDB connection string:
 ```
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
+MONGODB_URI=your_mongodb_connection_string_here
+```
+
+Example format:
+```
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
 ```
 
 5. Run the development server:
